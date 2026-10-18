@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hospital Multi-Tier Spatial Structure & Facilities Intelligence Platform - Real-time Management for Hospitals, Buildings, Floors, Wards, Rooms, and Beds.">
+  <meta name="theme-color" content="#070b14">
+  <title>Hospital Structure & Facility Intelligence | Smart Hospital Hygiene</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core & Structure Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/structure.css">
+</head>
+<body>
+  <div class="app-layout" style="display: flex; flex-direction: column; min-height: 100vh;">
+    <!-- Top Glass Navigation Bar -->
+    <header class="top-header" id="main-header">
+      <div class="brand-section">
+        <div class="brand-icon-wrapper" id="brand-logo-icon">
+          <!-- Medical Shield Cross Icon -->
+          <svg viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v8m-4-4h8"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>HOSPITAL STRUCTURE INTELLIGENCE</h1>
+          <p>Multi-Tier Spatial Hierarchy & Operational Capacity Management</p>
+        </div>
+      </div>
+
+      <!-- Quick Portal Navigation -->
+      <div class="header-actions">
+        <a href="/" class="btn-secondary-action" style="text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          IoT Telemetry Dashboard
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-wrapper" style="max-width: 1540px; margin: 0 auto; width: 100%; padding: 1.5rem 1.8rem; flex: 1;">
+      <div id="standalone-structure-container">
+        <!-- Injected by structureManager.js -->
+      </div>
+    </main>
+
+    <!-- Floating Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/structureManager.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.structureManager = new HospitalStructureManager('standalone-structure-container');
+    });
+  </script>
+</body>
+</html>

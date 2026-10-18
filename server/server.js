@@ -16,6 +16,47 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Spring Boot Backend Proxy (forwards structure & auth endpoints)
+const BACKEND_URL = process.env.BACKEND_URL || 'http://127.0.0.1:8080';
+function proxyToSpringBoot(req, res) {
+  const targetUrl = new URL(req.originalUrl, BACKEND_URL);
+  const proxyReq = http.request(targetUrl, {
+    method: req.method,
+    headers: {
+      ...req.headers,
+      host: targetUrl.host
+    }
+  }, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode, proxyRes.headers);
+    proxyRes.pipe(res);
+  });
+
+  proxyReq.on('error', (err) => {
+    console.error(`[Backend Proxy Error] ${req.method} ${req.originalUrl}:`, err.message);
+    if (!res.headersSent) {
+      res.status(502).json({
+        timestamp: new Date().toISOString(),
+        status: 502,
+        success: false,
+        message: `Failed to communicate with Spring Boot backend: ${err.message}`
+      });
+    }
+  });
+
+  if (['POST', 'PUT', 'PATCH'].includes(req.method) && req.body) {
+    const bodyStr = typeof req.body === 'object' ? JSON.stringify(req.body) : req.body;
+    proxyReq.setHeader('Content-Type', 'application/json');
+    proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyStr));
+    proxyReq.write(bodyStr);
+  }
+  proxyReq.end();
+}
+
+// Intercept Spring Boot Structure and Auth routes
+app.use(['/api/hospitals*', '/api/buildings*', '/api/floors*', '/api/wards*', '/api/rooms*', '/api/beds*', '/api/auth*'], (req, res) => {
+  proxyToSpringBoot(req, res);
+});
+
 // WebSocket Server
 const wss = new WebSocketServer({ server });
 

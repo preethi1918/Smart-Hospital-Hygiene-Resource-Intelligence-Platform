@@ -33,6 +33,11 @@ class HospitalIntelligenceApp {
     this.simulatorControls = new SimulatorControls(this);
     this.floorMap = new HospitalFloorMap('floor-map-container', (zoneId) => this.selectZone(zoneId));
 
+    if (typeof HospitalStructureManager !== 'undefined') {
+      this.structureManager = new HospitalStructureManager('structure-management-container');
+      window.structureManager = this.structureManager;
+    }
+
     this.initTabs();
     this.connectWebSocket();
   }
@@ -63,6 +68,11 @@ class HospitalIntelligenceApp {
     // If analytics tab opened, trigger chart render
     if (tabId === 'analytics') {
       setTimeout(() => this.charts.renderAll(), 80);
+    }
+
+    // If structure tab opened, refresh current structure view
+    if (tabId === 'structure' && this.structureManager) {
+      this.structureManager.loadCurrentTabData();
     }
   }
 

@@ -5,3 +5,5 @@ backend/target/
 target/
 .idea/
 .vscode/
+backend/data/
+*.db

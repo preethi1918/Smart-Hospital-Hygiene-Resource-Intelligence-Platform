@@ -759,4 +759,377 @@ Hospital
 
 ## Frontend
 
--
+- React.js
+- JavaScript
+- HTML5
+- CSS3
+
+## Backend
+
+- Java
+- Spring Boot
+- Spring Data JPA
+- Spring Security
+- REST APIs
+- JWT
+
+## Database
+
+- MySQL
+
+## Machine Learning
+
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- FastAPI
+
+## Tools
+
+- Git
+- GitHub
+- VS Code
+- IntelliJ IDEA
+- Postman
+
+---
+
+# 📂 Project Structure
+
+```text
+smart-hospital-platform/
+│
+├── frontend/
+│   ├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   └── assets/
+│
+├── backend/
+│   ├── src/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── repository/
+│   │   ├── model/
+│   │   ├── dto/
+│   │   ├── security/
+│   │   └── config/
+│   └── pom.xml
+│
+├── ml/
+│   ├── datasets/
+│   ├── notebooks/
+│   ├── models/
+│   └── prediction.py
+│
+├── database/
+│   └── schema.sql
+│
+├── docs/
+│   ├── architecture/
+│   ├── api/
+│   └── screenshots/
+│
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+# 🔄 Complete System Workflow
+
+```text
+Hospital Setup
+      ↓
+Create Wards & Rooms
+      ↓
+Register Beds / Linen / Equipment
+      ↓
+Generate QR Codes
+      ↓
+Assign Staff Tasks
+      ↓
+Staff Scans QR
+      ↓
+Perform Activity
+      ↓
+System Records Activity
+      ↓
+Dashboard Updates
+      ↓
+Alerts Generated
+      ↓
+Analytics
+      ↓
+Predictive Insights
+      ↓
+Operational Decision Support
+```
+
+---
+
+# 🔐 Security
+
+The platform includes:
+
+- JWT authentication
+- Role-based access control
+- BCrypt password hashing
+- API authorization
+- Input validation
+- Secure error handling
+- Audit logging
+- Environment variables for secrets
+- Restricted resource access
+
+The system should minimize the use of patient-identifying information.
+
+---
+
+# 🧪 Testing
+
+Testing will cover:
+
+### Backend
+
+- Unit tests
+- Service tests
+- Controller tests
+- Authentication tests
+
+### Frontend
+
+- Component testing
+- Form validation
+- API error handling
+- Role-based UI
+
+### Integration
+
+- Login
+- QR scanning
+- Linen updates
+- Cleaning tasks
+- Equipment maintenance
+- Inventory
+- Dashboard
+- Alerts
+- ML predictions
+
+---
+
+# 📋 Development Roadmap
+
+## Phase 1 — Foundation
+
+- [ ] Project initialization
+- [ ] Database design
+- [ ] Spring Boot setup
+- [ ] Authentication
+
+## Phase 2 — Hospital Structure
+
+- [ ] Hospital management
+- [ ] Ward management
+- [ ] Room management
+- [ ] Bed management
+- [ ] React frontend foundation
+
+## Phase 3 — Core Operations
+
+- [ ] Linen management
+- [ ] QR generation
+- [ ] QR scanning
+- [ ] Cleaning management
+- [ ] Equipment management
+- [ ] Maintenance management
+- [ ] Inventory management
+- [ ] Waste management
+- [ ] Staff task management
+
+## Phase 4 — Intelligence
+
+- [ ] Room readiness score
+- [ ] Ward hygiene score
+- [ ] Dashboard
+- [ ] Alert system
+- [ ] Audit trail
+
+## Phase 5 — Analytics & ML
+
+- [ ] Analytics dashboard
+- [ ] Dataset preparation
+- [ ] Linen prediction
+- [ ] Consumable prediction
+- [ ] ML API integration
+
+## Phase 6 — Finalization
+
+- [ ] UI/UX improvements
+- [ ] Security review
+- [ ] Testing
+- [ ] Docker configuration
+- [ ] Deployment
+- [ ] Final documentation
+
+---
+
+# 🌟 Key Differentiators
+
+This project is **not just a bedsheet tracking system** and is not intended to replace existing hospital-management software.
+
+The platform focuses specifically on **hospital operational hygiene and resource intelligence**.
+
+### Major differentiators:
+
+**1. Unified Operational Platform**
+
+Combines:
+
+> Hygiene + Linen + Cleaning + Equipment + Inventory + Waste + Maintenance
+
+---
+
+**2. Room Readiness**
+
+Provides a single operational view of whether a room is ready.
+
+---
+
+**3. Ward Hygiene Score**
+
+Helps management compare operational performance between wards.
+
+---
+
+**4. QR-Based Digital Workflow**
+
+Connects physical hospital resources with digital records.
+
+---
+
+**5. Digital Audit Trail**
+
+Maintains:
+
+> Who + What + Where + When
+
+for important activities.
+
+---
+
+**6. Predictive Resource Planning**
+
+Uses historical operational data to estimate future linen and consumable requirements.
+
+---
+
+# ⚠️ Scope & Limitations
+
+This project is intended for **hospital operational management and decision support**.
+
+It does **not**:
+
+- Diagnose diseases
+- Replace doctors or nurses
+- Determine whether a patient has an infection
+- Guarantee microbiological sterility
+- Replace hospital hygiene protocols
+- Make clinical treatment decisions
+
+The system records and analyzes operational activities while actual hospital procedures remain under qualified healthcare professionals and institutional protocols.
+
+---
+
+# 🚀 Future Enhancements
+
+Future versions may include:
+
+- RFID-based tracking
+- NFC identification
+- IoT-enabled smart waste bins
+- BLE equipment tracking
+- Dedicated mobile application
+- Multi-hospital support
+- Advanced predictive maintenance
+- Real-time asset location
+- Cloud deployment
+- Automated compliance reports
+- Advanced demand forecasting
+- Integration with existing hospital information systems
+
+---
+
+# 🎯 Expected Outcome
+
+The final system aims to transform hospital operational management from:
+
+```text
+Manual Registers
+      ↓
+Scattered Information
+      ↓
+Delayed Monitoring
+```
+
+into:
+
+```text
+Digital Tracking
+      ↓
+Centralized Data
+      ↓
+Real-Time Monitoring
+      ↓
+Analytics
+      ↓
+Predictive Insights
+      ↓
+Better Operational Decisions
+```
+
+---
+
+# 👩‍💻 Project Status
+
+🚧 **Currently in Development**
+
+The project is being developed incrementally using a phase-by-phase approach.
+
+The first MVP focuses on:
+
+```text
+Login
+  ↓
+Ward
+  ↓
+Room
+  ↓
+Bed
+  ↓
+QR Code
+  ↓
+Linen
+  ↓
+Cleaning
+  ↓
+Room Readiness
+  ↓
+Dashboard
+```
+
+Additional modules will be integrated progressively.
+
+---
+
+# 📜 License
+
+This project is developed for **educational, research, and demonstration purposes**.
+
+---
+
+## 🏥 Vision
+
+> **To create a connected hospital operational environment where every important resource, task, and hygiene activity can be digitally tracked, monitored, and improved through data.**

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Next-generation smart hospital hygiene, IoT disinfection telemetry, bio-waste monitoring, and critical clinical resource intelligence platform.">
+  <meta name="theme-color" content="#070b14">
+  <title>Smart Hospital Hygiene & Resource Intelligence Platform</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core & Dashboard Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Glass Navigation Bar -->
+    <header class="top-header" id="main-header">
+      <div class="brand-section">
+        <div class="brand-icon-wrapper" id="brand-logo-icon">
+          <!-- Medical Shield Cross Icon -->
+          <svg viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M12 8v8m-4-4h8"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>HYGIENE & RESOURCE INTELLIGENCE</h1>
+          <p>Autonomous Hospital Infection Control & Clinical IoT Fleet Telemetry</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" aria-label="Hospital Intelligence Navigation">
+        <button class="nav-tab-btn active" data-tab="overview" id="nav-btn-overview">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          Floor Map & Overview
+        </button>
+        <button class="nav-tab-btn" data-tab="hygiene" id="nav-btn-hygiene">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v6m-4-3h8M7 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z"/>
+          </svg>
+          Hygiene & Sterilization
+        </button>
+        <button class="nav-tab-btn" data-tab="resources" id="nav-btn-resources">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Resources & Oxygen
+        </button>
+        <button class="nav-tab-btn" data-tab="analytics" id="nav-btn-analytics">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Infection AI & Analytics
+        </button>
+        <button class="nav-tab-btn" data-tab="alerts" id="nav-btn-alerts">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          Incidents & Alerts
+        </button>
+      </nav>
+
+      <!-- Header Status & Action Controls -->
+      <div class="header-actions">
+        <!-- Live WebSocket Indicator -->
+        <div class="connection-badge" id="connection-status-badge">
+          <span class="status-dot" id="connection-status-dot"></span>
+          <span id="connection-status-text">Connecting...</span>
+        </div>
+
+        <!-- Audio Alert Tone Toggle -->
+        <button class="btn-action-icon active" id="btn-audio-toggle" title="Alarm Audio: Enabled" onclick="window.hospitalApp.alertsManager.toggleAudio()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+        </button>
+
+        <!-- Alerts Drawer Badge Button -->
+        <button class="btn-action-icon" id="btn-alerts-quick-view" title="Active Alerts" onclick="window.hospitalApp.switchTab('alerts')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="badge-count" id="alerts-count-badge">2</span>
+        </button>
+
+        <!-- Simulation Trigger Drawer Button -->
+        <button class="btn-sim-trigger" id="btn-open-simulator">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          IoT Simulator & Faults
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-wrapper" id="main-content">
+      <!-- High-Level KPI Summary Deck -->
+      <section class="kpi-grid" aria-label="Key Hospital Intelligence Metrics">
+        <!-- 1. Overall Hygiene Index -->
+        <article class="kpi-card emerald" id="card-kpi-hygiene">
+          <div class="kpi-header">
+            <span class="kpi-title">Overall Hygiene Index</span>
+            <div class="kpi-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-emerald)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-overall-hygiene">94.2%</span>
+            <span class="kpi-unit">Target >90%</span>
+          </div>
+          <div class="kpi-subtext">
+            <span class="trend-pill positive">&bull; Sterile Safe</span>
+            <span>All critical surgical wings within baseline</span>
+          </div>
+        </article>
+
+        <!-- 2. Staff Sanitizer Compliance -->
+        <article class="kpi-card" id="card-kpi-compliance">
+          <div class="kpi-header">
+            <span class="kpi-title">Hand Sanitizer Compliance</span>
+            <div class="kpi-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+                <path d="M12 2v6m-4-3h8M7 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-avg-compliance">92.8%</span>
+            <span class="kpi-unit">Shift Average</span>
+          </div>
+          <div class="kpi-subtext">
+            <span class="trend-pill positive">+1.4%</span>
+            <span>Over 4,800 automated RFID touches</span>
+          </div>
+        </article>
+
+        <!-- 3. Active UV-C Sterilization -->
+        <article class="kpi-card purple" id="card-kpi-uvc">
+          <div class="kpi-header">
+            <span class="kpi-title">Active UV-C Sterilizations</span>
+            <div class="kpi-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-uvc-active">2</span>
+            <span class="kpi-unit">Robots / Arrays</span>
+          </div>
+          <div class="kpi-subtext">
+            <span class="trend-pill positive">Active Inactivation</span>
+            <span>OT-2 & Isolation Room 102</span>
+          </div>
+        </article>
+
+        <!-- 4. Oxygen Line Pressure -->
+        <article class="kpi-card" id="card-kpi-oxygen">
+          <div class="kpi-header">
+            <span class="kpi-title">Medical Oxygen Pressure</span>
+            <div class="kpi-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan)" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-oxygen-pressure">4.24 bar</span>
+            <span class="kpi-unit">Norm: 4.20 bar</span>
+          </div>
+          <div class="kpi-subtext">
+            <span class="trend-pill positive">Optimal</span>
+            <span>74 hrs bulk cryogenic reserves</span>
+          </div>
+        </article>
+
+        <!-- 5. ICU Bed Occupancy -->
+        <article class="kpi-card amber" id="card-kpi-beds">
+          <div class="kpi-header">
+            <span class="kpi-title">ICU Bed Occupancy</span>
+            <div class="kpi-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-amber)" stroke-width="2">
+                <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-icu-beds">87.5%</span>
+            <span class="kpi-unit">14 / 16 Beds</span>
+          </div>
+          <div class="kpi-subtext">
+            <span class="trend-pill warning">High Demand</span>
+            <span>2 Critical Care Beds Available</span>
+          </div>
+        </article>
+
+        <!-- 6. Active Alarms -->
+        <article class="kpi-card crimson" id="card-kpi-alarms">
+          <div class="kpi-header">
+            <span class="kpi-title">Active Hazard Alarms</span>
+            <div class="kpi-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-crimson)" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+          </div>
+          <div class="kpi-value-row">
+            <span class="kpi-value" id="kpi-active-alarms">3</span>
+            <span class="kpi-unit">Open Incidents</span>
+          </div>
+          <div class="kpi-subtext">
+            <span class="trend-pill negative">1 Urgent Action</span>
+            <span>ICU Biohazard Container at 89%</span>
+          </div>
+        </article>
+      </section>
+
+      <!-- TAB 1: FLOOR MAP & OVERVIEW -->
+      <section class="tab-pane active" id="tab-overview">
+        <div class="dashboard-grid-split">
+          <!-- Interactive Architectural Floor Map -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <span class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+                  <line x1="8" y1="2" x2="8" y2="18"/>
+                  <line x1="16" y1="6" x2="16" y2="22"/>
+                </svg>
+                Hospital Spatial Hygiene & IoT Sensor Map
+              </span>
+              <span style="font-size: 0.76rem; color: var(--text-muted);">Click any wing or sensor pin to inspect</span>
+            </div>
+            <div class="map-container" id="floor-map-container">
+              <!-- Dynamically populated by floorMap.js -->
+            </div>
+          </div>
+
+          <!-- Zone Telemetry Inspector -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <span class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                Zone Telemetry Inspector
+              </span>
+              <span style="font-size: 0.74rem; color: var(--accent-cyan); font-family: var(--font-mono);">LIVE FEED</span>
+            </div>
+            <div class="zone-detail-card" id="selected-zone-inspector">
+              <!-- Dynamically populated by app.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: HYGIENE & STERILIZATION COMMAND -->
+      <section class="tab-pane" id="tab-hygiene">
+        <!-- Sub-Module 1: Smart Touchless Dispensers -->
+        <div class="glass-panel" style="margin-bottom: 1.8rem;">
+          <div class="panel-header">
+            <span class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v6m-4-3h8M7 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z"/>
+              </svg>
+              Smart Touchless Hand Sanitizer Dispenser Fleet (RFID & IoT Monitored)
+            </span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Real-time cartridge volume, battery & compliance</span>
+          </div>
+          <div class="devices-grid" id="dispensers-grid-container">
+            <!-- Dynamically populated by hygieneMonitor.js -->
+          </div>
+        </div>
+
+        <!-- Sub-Module 2: UV-C Surface & Air Inactivation Units -->
+        <div class="glass-panel" style="margin-bottom: 1.8rem;">
+          <div class="panel-header">
+            <span class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+              </svg>
+              UV-C Terminal Sterilization Robots & Ceiling Array Emitters
+            </span>
+            <span style="font-size: 0.78rem; color: #c4b5fd;">PIR Safe Interlock & Lethal 254nm / 222nm Dosage Tracking</span>
+          </div>
+          <div class="devices-grid" id="uvc-grid-container">
+            <!-- Dynamically populated by hygieneMonitor.js -->
+          </div>
+        </div>
+
+        <!-- Sub-Module 3: Smart Bio-Hazard Waste Bins -->
+        <div class="glass-panel" style="margin-bottom: 1.8rem;">
+          <div class="panel-header">
+            <span class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              </svg>
+              Smart Bio-Hazard Waste Containers (Optical Fill & Load Cell Sensors)
+            </span>
+            <span style="font-size: 0.78rem; color: var(--accent-amber);">Automatic Hazmat Overfill & Spill Prevention</span>
+          </div>
+          <div class="devices-grid" id="biobins-grid-container">
+            <!-- Dynamically populated by hygieneMonitor.js -->
+          </div>
+        </div>
+
+        <!-- Sub-Module 4: Operating Theatre & ICU Air Quality Enclosures -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <span class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+              </svg>
+              Air Sterility, HEPA Filtration & Positive / Negative Pressure Barriers
+            </span>
+            <span style="font-size: 0.78rem; color: var(--accent-cyan);">ACH, PM2.5, Microbial CFU & Pressure Enclosure</span>
+          </div>
+          <div class="air-quality-grid" id="air-quality-container">
+            <!-- Dynamically populated by hygieneMonitor.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: RESOURCE & CRITICAL ASSET INTELLIGENCE -->
+      <section class="tab-pane" id="tab-resources">
+        <div id="resources-container">
+          <!-- Dynamically populated by resourceMonitor.js -->
+        </div>
+      </section>
+
+      <!-- TAB 4: INFECTION RISK & AI ANALYTICS -->
+      <section class="tab-pane" id="tab-analytics">
+        <div class="glass-panel" style="margin-bottom: 1.8rem;">
+          <div class="panel-header">
+            <span class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+              12-Hour Hand Sanitization & Sterilization Compliance Trends
+            </span>
+            <div style="display: flex; gap: 1rem; font-size: 0.74rem;">
+              <span style="color: #00f2fe;">&bull; OT Complex (98.4%)</span>
+              <span style="color: #10b981;">&bull; ICU Wings (92.6%)</span>
+              <span style="color: #f59e0b;">&bull; ER Trauma (84.1%)</span>
+            </div>
+          </div>
+          <div class="analytics-chart-container">
+            <canvas id="compliance-trend-canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard-grid-split">
+          <!-- AI Cross-Correlation: Compliance vs Hospital-Acquired Infection (HAI) Risk -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <span class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                </svg>
+                AI Infection Risk Correlation (Hygiene Score vs HAI Probability)
+              </span>
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="hai-risk-canvas"></canvas>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.8rem;">
+              Mathematical correlation demonstrates an exponential 4.2x rise in HAI transmission vectors when compliance drops below the 85% safety boundary.
+            </p>
+          </div>
+
+          <!-- Bio-Waste Accumulation Velocity -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <span class="panel-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                Cumulative Bio-Waste Generation (kg)
+              </span>
+            </div>
+            <div class="analytics-chart-container">
+              <canvas id="waste-accum-canvas"></canvas>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.8rem;">
+              Automated hazardous material manifest predicting next central autoclave sterilization transfer window at 21:00.
+            </p>
+          </div>
+        </div>
+
+        <!-- Correlation Matrices and Analytical Insights -->
+        <div class="correlation-matrix-grid">
+          <div class="correlation-card">
+            <span class="correlation-val-badge">r = -0.89 (Inverse Correlation)</span>
+            <h5>Sanitizer Frequency vs Microbial Pathogen Count</h5>
+            <p>High sanitization touchpoints in surgical scrub suites correlate directly with sub-5 CFU/m³ microbial colonization in OT air samples.</p>
+          </div>
+          <div class="correlation-card">
+            <span class="correlation-val-badge">99.999% Clearance</span>
+            <h5>Terminal UV-C 254nm Dosage Efficacy</h5>
+            <p>Pulsed Xenon & UVGI cycle exposures above 45 mJ/cm² achieve complete lethal eradication of C. difficile spores and MRSA cultures.</p>
+          </div>
+          <div class="correlation-card">
+            <span class="correlation-val-badge">+25 Pa Seal Efficiency</span>
+            <h5>Positive Pressure Barrier Integrity</h5>
+            <p>Continuous positive pressure differential maintains ultra-clean laminar boundary, preventing airborne infiltration during surgical access door openings.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: INCIDENT RESPONSE & LIVE ALERTS -->
+      <section class="tab-pane" id="tab-alerts">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <span class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              Live Incident Dispatch & Hazard Event Feed
+            </span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Real-Time Infection Control & Facility Dispatch Audit Log</span>
+          </div>
+
+          <div class="alerts-filter-bar">
+            <div class="filter-btn-group">
+              <button class="filter-btn active" data-filter="all" onclick="window.hospitalApp.alertsManager.setFilter('all')">All Events</button>
+              <button class="filter-btn" data-filter="critical" onclick="window.hospitalApp.alertsManager.setFilter('critical')">Critical Hazards</button>
+              <button class="filter-btn" data-filter="warning" onclick="window.hospitalApp.alertsManager.setFilter('warning')">Warnings</button>
+              <button class="filter-btn" data-filter="info" onclick="window.hospitalApp.alertsManager.setFilter('info')">Informational</button>
+            </div>
+            <span style="font-size: 0.76rem; color: var(--text-dim);">Audio alerts active &bull; Auto-dispatch enabled</span>
+          </div>
+
+          <div class="alerts-list" id="alerts-list-container">
+            <!-- Dynamically populated by alertsManager.js -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Slide-Out IoT Telemetry Simulator & Fault Injector -->
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+    <aside class="slide-drawer" id="simulator-drawer" aria-label="IoT Simulation Drawer">
+      <div class="drawer-header">
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-purple)" stroke-width="2">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          IoT Fault & Anomaly Simulator
+        </h3>
+        <button class="drawer-close-btn" id="btn-close-simulator">&times;</button>
+      </div>
+
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.4rem;">
+        Inject simulated sensor anomalies and clinical hazards to test real-time alerting, audio warnings, and cross-data correlation workflows.
+      </p>
+
+      <!-- Anomaly 1: HEPA Filter Breach -->
+      <div class="sim-action-card">
+        <h4>1. OT Complex HEPA Filter Failure</h4>
+        <p>Simulates filter collapse: PM2.5 spikes to 38.5 µg/m³, positive pressure drops, and risk index escalates to High Risk.</p>
+        <button class="btn-trigger-anomaly" onclick="window.hospitalApp.simulatorControls.triggerAnomaly('HEPA_FAILURE', 'OT-COMPLEX')">
+          Trigger HEPA Filter Failure
+        </button>
+      </div>
+
+      <!-- Anomaly 2: ER Contamination Surge -->
+      <div class="sim-action-card">
+        <h4>2. ER Trauma Hygiene Compliance Crash</h4>
+        <p>Simulates mass influx: staff hand hygiene compliance plummets by 25% and triggers Hospital-Acquired Infection (HAI) outbreak alarm.</p>
+        <button class="btn-trigger-anomaly" onclick="window.hospitalApp.simulatorControls.triggerAnomaly('CONTAMINATION_SURGE', 'ER-TRAUMA')">
+          Trigger ER Compliance Drop
+        </button>
+      </div>
+
+      <!-- Anomaly 3: Medical Oxygen Pressure Loss -->
+      <div class="sim-action-card">
+        <h4>3. Medical Oxygen Manifold Pressure Drop</h4>
+        <p>Simulates gas line pressure drop to 3.10 bar (below 4.20 bar standard) to test ICU life-support alarm dispatch.</p>
+        <button class="btn-trigger-anomaly" onclick="window.hospitalApp.simulatorControls.triggerAnomaly('OXYGEN_PRESSURE_DROP', 'ICU-W1')">
+          Trigger Oxygen Line Pressure Drop
+        </button>
+      </div>
+
+      <!-- Anomaly 4: Biohazard Spill -->
+      <div class="sim-action-card">
+        <h4>4. Biohazard Waste Container Overflow</h4>
+        <p>Simulates 100% capacity container breach with hazardous liquid overflow in Intensive Care Unit.</p>
+        <button class="btn-trigger-anomaly" onclick="window.hospitalApp.simulatorControls.triggerAnomaly('BIO_WASTE_SPILL', 'ICU-W1')">
+          Trigger Biohazard Overflow Spill
+        </button>
+      </div>
+
+      <!-- Reset Simulation -->
+      <div style="margin-top: 1.5rem;">
+        <button class="btn-card-action" style="width: 100%; padding: 0.75rem; background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: var(--accent-emerald);" onclick="window.hospitalApp.simulatorControls.resetBaseline()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </svg>
+          Reset Hospital Baseline to Optimal
+        </button>
+      </div>
+    </aside>
+
+    <!-- Floating Live Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <!-- Client JavaScript Modules -->
+  <script src="js/floorMap.js"></script>
+  <script src="js/hygieneMonitor.js"></script>
+  <script src="js/resourceMonitor.js"></script>
+  <script src="js/alertsManager.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/simulatorControls.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

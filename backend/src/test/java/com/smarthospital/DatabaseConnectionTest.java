@@ -71,7 +71,8 @@ class DatabaseConnectionTest {
     @Test
     void testEntityHierarchyAndRepositories() {
         // 1. Create Role & User
-        Role role = roleRepository.save(new Role(RoleCode.ADMIN, "System Administrator", "Full Access"));
+        Role role = roleRepository.findByRoleCode(RoleCode.ADMIN)
+                .orElseGet(() -> roleRepository.save(new Role(RoleCode.ADMIN, "System Administrator", "Full Access")));
         assertNotNull(role.getRoleId());
 
         User user = new User();

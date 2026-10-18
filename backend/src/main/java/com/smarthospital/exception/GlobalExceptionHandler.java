@@ -49,6 +49,50 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBadCredentialsException(
+            org.springframework.security.authentication.BadCredentialsException ex, WebRequest request) {
+        ApiResponse<Object> response = ApiResponse.error(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Invalid credentials. Please verify your email/employee ID and password.",
+                java.util.Collections.singletonList("Authentication failed")
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(org.springframework.security.authentication.DisabledException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDisabledException(
+            org.springframework.security.authentication.DisabledException ex, WebRequest request) {
+        ApiResponse<Object> response = ApiResponse.error(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Account is deactivated or disabled. Please contact the administrator.",
+                java.util.Collections.singletonList("Account inactive")
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException(
+            org.springframework.security.access.AccessDeniedException ex, WebRequest request) {
+        ApiResponse<Object> response = ApiResponse.error(
+                HttpStatus.FORBIDDEN.value(),
+                "Access is denied. You do not possess the required role permissions for this operation.",
+                java.util.Collections.singletonList("Forbidden")
+        );
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAuthenticationException(
+            org.springframework.security.core.AuthenticationException ex, WebRequest request) {
+        ApiResponse<Object> response = ApiResponse.error(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Authentication failure: " + ex.getMessage(),
+                java.util.Collections.singletonList("Unauthorized")
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGlobalException(
             Exception ex, WebRequest request) {

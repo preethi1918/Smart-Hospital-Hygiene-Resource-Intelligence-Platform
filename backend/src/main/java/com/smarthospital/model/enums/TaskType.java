@@ -1,0 +1,12 @@
+package com.smarthospital.model.enums;
+
+public enum TaskType {
+    TERMINAL_ROOM_CLEAN,
+    ROUTINE_WARD_MOP,
+    BED_LINEN_CHANGE,
+    UVC_STERILIZATION_CYCLE,
+    BIO_WASTE_COLLECTION,
+    EQUIPMENT_MAINTENANCE,
+    DISPENSER_REFILL,
+    EMERGENCY_SPILL_RESPONSE
+}

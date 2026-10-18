@@ -1,0 +1,14 @@
+package com.smarthospital.model.enums;
+
+public enum OperationalStatus {
+    VACANT_CLEAN,
+    OCCUPIED,
+    DIRTY_PENDING_STRIP,
+    MAINTENANCE_OUT_OF_SERVICE,
+    AVAILABLE_STERILE,
+    IN_USE,
+    DIRTY_DECONTAMINATION_REQUIRED,
+    UNDER_MAINTENANCE,
+    CALIBRATION_OVERDUE,
+    DECOMMISSIONED
+}

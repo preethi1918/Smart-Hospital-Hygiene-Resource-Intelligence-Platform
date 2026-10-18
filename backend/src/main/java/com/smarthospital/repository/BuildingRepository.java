@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface BuildingRepository extends JpaRepository<Building, Integer> {
     List<Building> findByHospital_HospitalId(Integer hospitalId);
     Optional<Building> findByHospital_HospitalIdAndBuildingCode(Integer hospitalId, String buildingCode);
+    List<Building> findByStatus(String status);
+    List<Building> findByNameContainingIgnoreCase(String name);
+    long countByHospital_HospitalId(Integer hospitalId);
 }

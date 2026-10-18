@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface FloorRepository extends JpaRepository<Floor, Integer> {
     List<Floor> findByBuilding_BuildingId(Integer buildingId);
     Optional<Floor> findByBuilding_BuildingIdAndFloorNumber(Integer buildingId, Integer floorNumber);
+    List<Floor> findByStatus(String status);
+    long countByBuilding_BuildingId(Integer buildingId);
 }

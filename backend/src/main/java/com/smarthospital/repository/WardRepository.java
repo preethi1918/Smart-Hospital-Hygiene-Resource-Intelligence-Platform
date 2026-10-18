@@ -14,4 +14,6 @@ public interface WardRepository extends JpaRepository<Ward, Integer> {
     List<Ward> findByWardType(WardType wardType);
     List<Ward> findByFloor_FloorId(Integer floorId);
     List<Ward> findByStatus(String status);
+    List<Ward> findByNameContainingIgnoreCase(String name);
+    long countByFloor_FloorId(Integer floorId);
 }

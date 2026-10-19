@@ -43,6 +43,11 @@ class HospitalIntelligenceApp {
       window.linenManager = this.linenManager;
     }
 
+    if (typeof HospitalQrManager !== 'undefined') {
+      this.qrManager = new HospitalQrManager('qr-management-container');
+      window.qrManager = this.qrManager;
+    }
+
     this.initTabs();
     this.connectWebSocket();
   }
@@ -78,6 +83,17 @@ class HospitalIntelligenceApp {
     // If structure tab opened, refresh current structure view
     if (tabId === 'structure' && this.structureManager) {
       this.structureManager.loadCurrentTabData();
+    }
+
+    // If linen tab opened, refresh linen stats and inventory
+    if (tabId === 'linen' && this.linenManager) {
+      this.linenManager.loadInventory();
+      this.linenManager.loadStats();
+    }
+
+    // If QR tab opened, refresh QR resources
+    if (tabId === 'qr' && this.qrManager) {
+      this.qrManager.loadResources();
     }
 
     // If linen tab opened, refresh linen data

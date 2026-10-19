@@ -52,8 +52,8 @@ function proxyToSpringBoot(req, res) {
   proxyReq.end();
 }
 
-// Intercept Spring Boot Structure, Linen, and Auth routes
-app.use(['/api/hospitals*', '/api/buildings*', '/api/floors*', '/api/wards*', '/api/rooms*', '/api/beds*', '/api/linen*', '/api/auth*'], (req, res) => {
+// Intercept Spring Boot Structure, Linen, Auth, and QR routes
+app.use(['/api/hospitals*', '/api/buildings*', '/api/floors*', '/api/wards*', '/api/rooms*', '/api/beds*', '/api/linen*', '/api/auth*', '/api/qr*'], (req, res) => {
   proxyToSpringBoot(req, res);
 });
 

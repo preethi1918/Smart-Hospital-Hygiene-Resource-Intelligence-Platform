@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="css/dashboard.css">
   <link rel="stylesheet" href="css/structure.css">
   <link rel="stylesheet" href="css/linen.css">
+  <link rel="stylesheet" href="css/qr.css">
 </head>
 <body>
   <div class="app-layout">
@@ -94,6 +95,16 @@
             <path d="M4 10h16M10 4v16"/>
           </svg>
           Linen Management
+        </button>
+        <button class="nav-tab-btn" data-tab="qr" id="nav-btn-qr">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+            <path d="M7 7h.01M18 7h.01M7 18h.01M18 18h.01"></path>
+          </svg>
+          QR Asset Hub
         </button>
       </nav>
 
@@ -507,6 +518,13 @@
           <!-- Dynamically populated by linenManager.js -->
         </div>
       </section>
+
+      <!-- TAB 8: QR CODE ASSET INTELLIGENCE -->
+      <section class="tab-pane" id="tab-qr">
+        <div id="qr-management-container">
+          <!-- Dynamically populated by qrManager.js -->
+        </div>
+      </section>
     </main>
 
     <!-- Slide-Out IoT Telemetry Simulator & Fault Injector -->
@@ -587,6 +605,8 @@
   <script src="js/simulatorControls.js"></script>
   <script src="js/structureManager.js"></script>
   <script src="js/linenManager.js"></script>
+  <script src="js/qrcode.js"></script>
+  <script src="js/qrManager.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

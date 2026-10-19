@@ -22,27 +22,33 @@ public class DataInitializer implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
-    private final BedRepository bedRepository;
+    private final WardRepository wardRepository;
     private final RoomRepository roomRepository;
+    private final BedRepository bedRepository;
     private final LinenRepository linenRepository;
     private final LinenHistoryRepository linenHistoryRepository;
+    private final EquipmentRepository equipmentRepository;
     private final PasswordEncoder passwordEncoder;
     private final DataSource dataSource;
 
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
-                           BedRepository bedRepository,
+                           WardRepository wardRepository,
                            RoomRepository roomRepository,
+                           BedRepository bedRepository,
                            LinenRepository linenRepository,
                            LinenHistoryRepository linenHistoryRepository,
+                           EquipmentRepository equipmentRepository,
                            PasswordEncoder passwordEncoder,
                            DataSource dataSource) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
-        this.bedRepository = bedRepository;
+        this.wardRepository = wardRepository;
         this.roomRepository = roomRepository;
+        this.bedRepository = bedRepository;
         this.linenRepository = linenRepository;
         this.linenHistoryRepository = linenHistoryRepository;
+        this.equipmentRepository = equipmentRepository;
         this.passwordEncoder = passwordEncoder;
         this.dataSource = dataSource;
     }
@@ -53,8 +59,9 @@ public class DataInitializer implements CommandLineRunner {
         fixLinenTypeColumn();
         initializeRoles();
         initializeDefaultAdmin();
-        initializeBeds();
+        initializeStructureAndBeds();
         initializeLinenItems();
+        initializeEquipment();
     }
 
     private void fixLinenTypeColumn() {
@@ -98,7 +105,6 @@ public class DataInitializer implements CommandLineRunner {
             User admin = new User();
             admin.setEmployeeId(adminEmployeeId);
             admin.setEmail(adminEmail);
-            // Secure BCrypt hash: Never store plaintext passwords!
             admin.setPasswordHash(passwordEncoder.encode("Admin@123456"));
             admin.setFirstName("Hospital");
             admin.setLastName("Administrator");
@@ -112,13 +118,19 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    private void initializeBeds() {
-        if (bedRepository.count() == 0) {
-            roomRepository.findById(1L).ifPresent(room -> {
+    private void initializeStructureAndBeds() {
+        // Room 305 beds
+        roomRepository.findById(1L).ifPresent(room -> {
+            if (room.getQrCodeIdentifier() == null || room.getQrCodeIdentifier().trim().isEmpty()) {
+                room.setQrCodeIdentifier("ROOM-305");
+                roomRepository.save(room);
+            }
+
+            if (bedRepository.count() == 0) {
                 Bed bed1 = new Bed();
                 bed1.setRoom(room);
                 bed1.setBedNumber("ICU-BED-305A");
-                bed1.setQrCodeIdentifier("QR-BED-305A");
+                bed1.setQrCodeIdentifier("ICU-BED-305A");
                 bed1.setBedType(BedType.ICU_ELECTRIC);
                 bed1.setOperationalStatus(OperationalStatus.VACANT_CLEAN);
                 bedRepository.save(bed1);
@@ -126,17 +138,57 @@ public class DataInitializer implements CommandLineRunner {
                 Bed bed2 = new Bed();
                 bed2.setRoom(room);
                 bed2.setBedNumber("ICU-BED-305B");
-                bed2.setQrCodeIdentifier("QR-BED-305B");
+                bed2.setQrCodeIdentifier("ICU-BED-305B");
                 bed2.setBedType(BedType.ISOLATION_NEGATIVE);
                 bed2.setOperationalStatus(OperationalStatus.OCCUPIED);
                 bedRepository.save(bed2);
                 logger.info("Initialized sample ICU beds in Room 305");
-            });
+            }
+        });
+
+        // Initialize Room ROOM-204 and Bed BED-204 if missing (User prompt example)
+        if (roomRepository.findByQrCodeIdentifier("ROOM-204").isEmpty()) {
+            Ward ward = wardRepository.findAll().stream().findFirst().orElse(null);
+            if (ward != null) {
+                Room room204 = new Room();
+                room204.setWard(ward);
+                room204.setRoomNumber("204");
+                room204.setRoomType(RoomType.PATIENT_ROOM);
+                room204.setAirflowType(AirflowType.STANDARD_LAMINAR);
+                room204.setReadinessStatus(ReadinessStatus.READY_FOR_USE);
+                room204.setQrCodeIdentifier("ROOM-204");
+                Room savedRoom = roomRepository.save(room204);
+
+                Bed bed204 = new Bed();
+                bed204.setRoom(savedRoom);
+                bed204.setBedNumber("204");
+                bed204.setBedType(BedType.STANDARD_INPATIENT);
+                bed204.setOperationalStatus(OperationalStatus.VACANT_CLEAN);
+                bed204.setQrCodeIdentifier("BED-204");
+                bedRepository.save(bed204);
+                logger.info("Initialized sample Room ROOM-204 and Bed BED-204");
+            }
         }
     }
 
     private void initializeLinenItems() {
-        if (linenRepository.count() == 0) {
+        if (linenRepository.findByLinenCode("LINEN-1024").isEmpty()) {
+            Linen promptLinen = new Linen();
+            promptLinen.setLinenCode("LINEN-1024");
+            promptLinen.setRfidTagOrBarcode("LINEN-1024");
+            promptLinen.setLinenType(LinenType.BEDSHEET);
+            promptLinen.setStatus(LinenStatus.CLEAN);
+            promptLinen.setCurrentLocation("Central Linen Supply Bay 1");
+            promptLinen.setWashCycleCount(7);
+            promptLinen.setMaxWashCycles(60);
+            promptLinen.setIssueDate(LocalDate.now().minusMonths(2));
+            promptLinen.setLastWashedDate(LocalDate.now().minusDays(1));
+            promptLinen.setDamageStatus(DamageStatus.NONE);
+            linenRepository.save(promptLinen);
+            logger.info("Initialized sample prompt Linen LINEN-1024");
+        }
+
+        if (linenRepository.count() <= 1) {
             Bed bed1 = bedRepository.findAll().stream().findFirst().orElse(null);
 
             Linen l1 = new Linen();
@@ -247,6 +299,54 @@ public class DataInitializer implements CommandLineRunner {
             linenRepository.save(l8);
 
             logger.info("Initialized sample linen assets across all types and statuses");
+        }
+    }
+
+    private void initializeEquipment() {
+        if (equipmentRepository.findByQrCodeIdentifier("EQUIP-501").isEmpty()) {
+            Ward ward = wardRepository.findAll().stream().findFirst().orElse(null);
+            Room room = roomRepository.findAll().stream().findFirst().orElse(null);
+
+            Equipment eq1 = new Equipment();
+            eq1.setName("Mobile Xenon UVC Decontamination Robot");
+            eq1.setEquipmentCode("EQ-UVC-501");
+            eq1.setSerialNumber("SN-UVC-8821");
+            eq1.setCategory(EquipmentCategory.UVC_DISINFECTION_ROBOT);
+            eq1.setQrCodeIdentifier("EQUIP-501");
+            eq1.setOperationalStatus(OperationalStatus.AVAILABLE_STERILE);
+            eq1.setCurrentWard(ward);
+            eq1.setCurrentRoom(room);
+            eq1.setLastMaintenanceDate(LocalDate.now().minusDays(12));
+            eq1.setNextMaintenanceDue(LocalDate.now().plusMonths(3));
+            equipmentRepository.save(eq1);
+
+            Equipment eq2 = new Equipment();
+            eq2.setName("Intelligent ICU Mechanical Ventilator");
+            eq2.setEquipmentCode("EQ-VENT-502");
+            eq2.setSerialNumber("SN-VENT-9014");
+            eq2.setCategory(EquipmentCategory.VENTILATOR);
+            eq2.setQrCodeIdentifier("EQUIP-502");
+            eq2.setOperationalStatus(OperationalStatus.IN_USE);
+            eq2.setCurrentWard(ward);
+            eq2.setCurrentRoom(room);
+            eq2.setLastMaintenanceDate(LocalDate.now().minusDays(25));
+            eq2.setNextMaintenanceDue(LocalDate.now().plusMonths(2));
+            equipmentRepository.save(eq2);
+
+            Equipment eq3 = new Equipment();
+            eq3.setName("Multiparameter Patient Vital Signs Monitor");
+            eq3.setEquipmentCode("EQ-MON-503");
+            eq3.setSerialNumber("SN-MON-3312");
+            eq3.setCategory(EquipmentCategory.PATIENT_MONITOR);
+            eq3.setQrCodeIdentifier("EQUIP-503");
+            eq3.setOperationalStatus(OperationalStatus.AVAILABLE_STERILE);
+            eq3.setCurrentWard(ward);
+            eq3.setCurrentRoom(room);
+            eq3.setLastMaintenanceDate(LocalDate.now().minusDays(5));
+            eq3.setNextMaintenanceDue(LocalDate.now().plusMonths(6));
+            equipmentRepository.save(eq3);
+
+            logger.info("Initialized sample biomedical equipment items with QR codes");
         }
     }
 }

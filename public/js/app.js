@@ -38,6 +38,11 @@ class HospitalIntelligenceApp {
       window.structureManager = this.structureManager;
     }
 
+    if (typeof HospitalLinenManager !== 'undefined') {
+      this.linenManager = new HospitalLinenManager('linen-management-container');
+      window.linenManager = this.linenManager;
+    }
+
     this.initTabs();
     this.connectWebSocket();
   }
@@ -73,6 +78,11 @@ class HospitalIntelligenceApp {
     // If structure tab opened, refresh current structure view
     if (tabId === 'structure' && this.structureManager) {
       this.structureManager.loadCurrentTabData();
+    }
+
+    // If linen tab opened, refresh linen data
+    if (tabId === 'linen' && this.linenManager) {
+      this.linenManager.refreshData();
     }
   }
 

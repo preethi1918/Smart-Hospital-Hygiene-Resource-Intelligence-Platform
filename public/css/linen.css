@@ -1,0 +1,393 @@
+/* ==========================================================================
+   SMART HOSPITAL HYGIENE & RESOURCE INTELLIGENCE PLATFORM
+   Linen Management Stylesheet - Dark Clinical Glassmorphism
+   Tracks: ID, Type, Status, Location, Bed, Last Washed, Wash Cycles, History
+   ========================================================================== */
+
+/* Linen Management Container */
+.linen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Linen Top Bar */
+.linen-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.15rem 1.45rem;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+}
+
+.linen-title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.linen-icon-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.22) 0%, rgba(139, 92, 246, 0.18) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan);
+}
+
+.linen-title-text h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.linen-title-text p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Linen KPI Grid */
+.linen-kpi-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.linen-kpi-card {
+  padding: 1.1rem 1.3rem;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.linen-kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.linen-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.linen-kpi-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.linen-kpi-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.linen-kpi-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.linen-kpi-sub {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+/* Specific KPI Accents */
+.linen-kpi-card.clean {
+  border-left: 3px solid var(--accent-emerald);
+}
+.linen-kpi-card.in_use {
+  border-left: 3px solid var(--accent-blue);
+}
+.linen-kpi-card.due_change {
+  border-left: 3px solid var(--accent-amber);
+}
+.linen-kpi-card.in_laundry {
+  border-left: 3px solid var(--accent-purple);
+}
+.linen-kpi-card.damaged {
+  border-left: 3px solid var(--accent-crimson);
+}
+
+/* Linen Filter Toolbar */
+.linen-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  padding: 0.95rem 1.3rem;
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.linen-toolbar-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+/* Status Badges for Linen */
+.linen-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.linen-status-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+/* CLEAN */
+.linen-status-badge.clean {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+}
+.linen-status-badge.clean .badge-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+/* IN_USE */
+.linen-status-badge.in_use {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #60a5fa;
+}
+.linen-status-badge.in_use .badge-dot {
+  background: #3b82f6;
+  box-shadow: 0 0 8px #3b82f6;
+}
+
+/* DUE_FOR_CHANGE */
+.linen-status-badge.due_for_change {
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+.linen-status-badge.due_for_change .badge-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  animation: pulseDot 1.6s infinite;
+}
+
+/* IN_LAUNDRY */
+.linen-status-badge.in_laundry {
+  background: rgba(139, 92, 246, 0.14);
+  border: 1px solid rgba(139, 92, 246, 0.45);
+  color: #c084fc;
+}
+.linen-status-badge.in_laundry .badge-dot {
+  background: #a855f7;
+  box-shadow: 0 0 8px #a855f7;
+  animation: pulseDot 1.4s infinite;
+}
+
+/* DAMAGED */
+.linen-status-badge.damaged {
+  background: rgba(239, 68, 68, 0.14);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+.linen-status-badge.damaged .badge-dot {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+/* RETIRED */
+.linen-status-badge.retired {
+  background: rgba(100, 116, 139, 0.15);
+  border: 1px solid rgba(100, 116, 139, 0.35);
+  color: #94a3b8;
+}
+.linen-status-badge.retired .badge-dot {
+  background: #64748b;
+}
+
+/* Linen Type Tag */
+.linen-type-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  color: #7dd3fc;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+/* Damage Status Pill */
+.damage-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+.damage-pill.none {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.damage-pill.stained, .damage-pill.minor_wear {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+.damage-pill.torn, .damage-pill.contaminated, .damage-pill.severely_damaged {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Wash Cycle Progress Bar */
+.wash-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 90px;
+}
+.wash-meter-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+.wash-bar-bg {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.wash-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* History Timeline Inside Modal */
+.linen-history-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  position: relative;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+
+.linen-history-timeline::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 6px;
+  width: 2px;
+  background: rgba(0, 242, 254, 0.25);
+}
+
+.history-event-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--radius-sm);
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.history-event-item::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: -1.75rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0d1527;
+  border: 2px solid var(--accent-cyan);
+}
+
+.history-event-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.history-event-action {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.history-event-time {
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+.history-event-body {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.history-event-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.73rem;
+  color: var(--text-dim);
+  border-top: 1px dashed rgba(255, 255, 255, 0.05);
+  padding-top: 0.4rem;
+  margin-top: 0.2rem;
+}

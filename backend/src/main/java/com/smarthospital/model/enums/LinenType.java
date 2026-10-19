@@ -1,11 +1,9 @@
 package com.smarthospital.model.enums;
 
 public enum LinenType {
-    BEDSHEET_ICU,
-    BEDSHEET_GENERAL,
+    BEDSHEET,
     PILLOW_COVER,
-    BLANKET_THERMAL,
-    SURGICAL_GOWN,
-    SURGICAL_DRAPE,
-    TOWEL
+    BLANKET,
+    PATIENT_GOWN,
+    OTHER
 }

@@ -171,6 +171,11 @@ app.post('/api/actions/reset', (req, res) => {
   res.json({ success: true, message: 'All hospital zones and simulation data reset to optimal baseline.' });
 });
 
+// Route aliases for Mobile & React QR Scanner
+app.get(['/scanner', '/scan'], (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/scan.html'));
+});
+
 // Fallback to index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));

@@ -1,6 +1,7 @@
 package com.smarthospital.controller;
 
 import com.smarthospital.dto.ApiResponse;
+import com.smarthospital.dto.QrActionRequest;
 import com.smarthospital.dto.QrGenerateRequest;
 import com.smarthospital.dto.QrRegenerateRequest;
 import com.smarthospital.dto.QrResourceResponse;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/qr")
@@ -52,5 +54,19 @@ public class QrCodeController {
     public ResponseEntity<ApiResponse<QrResourceResponse>> regenerate(@Valid @RequestBody QrRegenerateRequest request) {
         QrResourceResponse response = qrCodeService.regenerateQrCode(request);
         return ResponseEntity.ok(ApiResponse.success("Resource QR identifier regenerated successfully", response));
+    }
+
+    @PostMapping("/action")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HOSPITAL_MANAGER', 'CLEANING_STAFF', 'MAINTENANCE_STAFF', 'STORE_MANAGER')")
+    public ResponseEntity<ApiResponse<QrResourceResponse>> executeAction(@Valid @RequestBody QrActionRequest request) {
+        QrResourceResponse response = qrCodeService.executeAction(request);
+        return ResponseEntity.ok(ApiResponse.success("QR action executed successfully", response));
+    }
+
+    @GetMapping("/history/{code}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'HOSPITAL_MANAGER', 'CLEANING_STAFF', 'MAINTENANCE_STAFF', 'STORE_MANAGER', 'AUDITOR')")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getHistory(@PathVariable String code) {
+        List<Map<String, Object>> history = qrCodeService.getResourceHistory(code);
+        return ResponseEntity.ok(ApiResponse.success("Resource history retrieved successfully", history));
     }
 }

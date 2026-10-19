@@ -1,5 +1,6 @@
 package com.smarthospital.model;
 
+import com.smarthospital.model.enums.CleaningLocationType;
 import com.smarthospital.model.enums.TaskPriority;
 import com.smarthospital.model.enums.TaskStatus;
 import com.smarthospital.model.enums.TaskType;
@@ -31,7 +32,7 @@ public class Task {
     private User assignedTo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_by_user_id", nullable = false)
+    @JoinColumn(name = "assigned_by_user_id", nullable = true)
     private User assignedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -50,6 +51,25 @@ public class Task {
     @JoinColumn(name = "target_equipment_id")
     private Equipment targetEquipment;
 
+    @Column(name = "location_name", length = 200)
+    private String locationName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "location_type", length = 50)
+    private CleaningLocationType locationType = CleaningLocationType.ROOM;
+
+    @Column(name = "target_qr_code", length = 100)
+    private String targetQrCode;
+
+    @Column(name = "assigned_staff_name", length = 150)
+    private String assignedStaffName;
+
+    @Column(name = "completed_by_staff_name", length = 150)
+    private String completedByStaffName;
+
+    @Column(name = "verified_by_staff_name", length = 150)
+    private String verifiedByStaffName;
+
     @Column(name = "scheduled_start_time", nullable = false)
     private LocalDateTime scheduledStartTime;
 
@@ -66,6 +86,9 @@ public class Task {
     @Column(name = "special_instructions", columnDefinition = "TEXT")
     private String specialInstructions;
 
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -80,6 +103,7 @@ public class Task {
         updatedAt = LocalDateTime.now();
         if (priority == null) priority = TaskPriority.ROUTINE;
         if (status == null) status = TaskStatus.PENDING;
+        if (locationType == null) locationType = CleaningLocationType.ROOM;
     }
 
     @PreUpdate
@@ -117,6 +141,24 @@ public class Task {
     public Equipment getTargetEquipment() { return targetEquipment; }
     public void setTargetEquipment(Equipment targetEquipment) { this.targetEquipment = targetEquipment; }
 
+    public String getLocationName() { return locationName; }
+    public void setLocationName(String locationName) { this.locationName = locationName; }
+
+    public CleaningLocationType getLocationType() { return locationType; }
+    public void setLocationType(CleaningLocationType locationType) { this.locationType = locationType; }
+
+    public String getTargetQrCode() { return targetQrCode; }
+    public void setTargetQrCode(String targetQrCode) { this.targetQrCode = targetQrCode; }
+
+    public String getAssignedStaffName() { return assignedStaffName; }
+    public void setAssignedStaffName(String assignedStaffName) { this.assignedStaffName = assignedStaffName; }
+
+    public String getCompletedByStaffName() { return completedByStaffName; }
+    public void setCompletedByStaffName(String completedByStaffName) { this.completedByStaffName = completedByStaffName; }
+
+    public String getVerifiedByStaffName() { return verifiedByStaffName; }
+    public void setVerifiedByStaffName(String verifiedByStaffName) { this.verifiedByStaffName = verifiedByStaffName; }
+
     public LocalDateTime getScheduledStartTime() { return scheduledStartTime; }
     public void setScheduledStartTime(LocalDateTime scheduledStartTime) { this.scheduledStartTime = scheduledStartTime; }
 
@@ -132,9 +174,25 @@ public class Task {
     public String getSpecialInstructions() { return specialInstructions; }
     public void setSpecialInstructions(String specialInstructions) { this.specialInstructions = specialInstructions; }
 
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    // Convenience aliases for task specification requirements
+    public String getLocation() { return locationName; }
+    public void setLocation(String loc) { this.locationName = loc; }
+
+    public String getAssignedStaff() { return assignedStaffName; }
+    public void setAssignedStaff(String staff) { this.assignedStaffName = staff; }
+
+    public LocalDateTime getScheduledTime() { return scheduledStartTime; }
+    public void setScheduledTime(LocalDateTime time) { this.scheduledStartTime = time; }
+
+    public LocalDateTime getCompletedTime() { return actualEndTime; }
+    public void setCompletedTime(LocalDateTime time) { this.actualEndTime = time; }
 }

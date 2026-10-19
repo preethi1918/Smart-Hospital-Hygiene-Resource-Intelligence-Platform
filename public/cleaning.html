@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hospital Cleaning & Hygiene Management - Comprehensive task scheduling and tracking for Rooms, Beds, Toilets, Corridors, Waiting Areas, and Handwash Stations with QR workflow and audit history.">
+  <meta name="theme-color" content="#070b14">
+  <title>Cleaning & Hygiene Management | Smart Hospital Intelligence</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core, Structure & Cleaning Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/structure.css">
+  <link rel="stylesheet" href="css/cleaning.css">
+</head>
+<body>
+  <div class="app-layout" style="display: flex; flex-direction: column; min-height: 100vh;">
+    <!-- Top Glass Navigation Bar -->
+    <header class="top-header" id="main-header">
+      <div class="brand-section">
+        <div class="brand-icon-wrapper" id="brand-logo-icon" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%); border-color: rgba(16, 185, 129, 0.4);">
+          <!-- Cleaning Sparkle & Hygiene Icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>HOSPITAL CLEANING & HYGIENE MANAGEMENT</h1>
+          <p>Rooms • Beds • Toilets • Corridors • Waiting Areas • Handwash Stations</p>
+        </div>
+      </div>
+
+      <!-- Quick Platform Navigation -->
+      <div class="header-actions">
+        <a href="/" class="btn-secondary-action" style="text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          IoT Telemetry
+        </a>
+        <a href="/structure.html" class="btn-secondary-action" style="text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+            <line x1="9" y1="22" x2="9" y2="22.01"/>
+            <line x1="15" y1="22" x2="15" y2="22.01"/>
+          </svg>
+          Structure
+        </a>
+        <a href="/linen.html" class="btn-secondary-action" style="text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <path d="M4 10h16M10 4v16"/>
+          </svg>
+          Linen & Laundry
+        </a>
+        <a href="/qr.html" class="btn-secondary-action" style="text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          QR Hub
+        </a>
+        <a href="/scan" class="btn-primary-action" style="text-decoration: none; padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 700; background: #61dafb; color: #070b14; border-radius: var(--radius-sm); display: inline-flex; align-items: center; gap: 0.35rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M9 12h6"/>
+          </svg>
+          QR Scanner
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-wrapper" style="max-width: 1540px; margin: 0 auto; width: 100%; padding: 1.5rem 1.8rem; flex: 1;">
+      <div id="cleaning-management-container">
+        <!-- Injected dynamically by HospitalCleaningManager -->
+      </div>
+    </main>
+
+    <!-- Floating Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/cleaningManager.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.cleaningManager = new HospitalCleaningManager('cleaning-management-container');
+    });
+  </script>
+</body>
+</html>

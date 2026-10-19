@@ -1,5 +1,6 @@
 package com.smarthospital.model;
 
+import com.smarthospital.model.enums.CleaningLocationType;
 import com.smarthospital.model.enums.CleaningMethod;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -19,7 +20,7 @@ public class CleaningLog {
     private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_id", nullable = true)
     private Room room;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,16 +28,29 @@ public class CleaningLog {
     private Bed bed;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "performed_by_user_id", nullable = false)
+    @JoinColumn(name = "performed_by_user_id", nullable = true)
     private User performedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "verified_by_user_id")
     private User verifiedBy;
 
+    @Column(name = "location_name", length = 200)
+    private String locationName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "location_type", length = 50)
+    private CleaningLocationType locationType = CleaningLocationType.ROOM;
+
+    @Column(name = "performed_by_staff_name", length = 150)
+    private String performedByStaffName;
+
+    @Column(name = "verified_by_staff_name", length = 150)
+    private String verifiedByStaffName;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "cleaning_method", nullable = false, length = 50)
-    private CleaningMethod cleaningMethod;
+    private CleaningMethod cleaningMethod = CleaningMethod.SURFACE_CHEMICAL_WIPE;
 
     @Column(name = "disinfectant_used", length = 150)
     private String disinfectantUsed;
@@ -48,12 +62,12 @@ public class CleaningLog {
     private BigDecimal hygieneScorePostClean;
 
     @Column(name = "status", nullable = false, length = 50)
-    private String status = "SUBMITTED";
+    private String status = "COMPLETED";
 
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
-    @Column(name = "started_at", nullable = false)
+    @Column(name = "started_at")
     private LocalDateTime startedAt;
 
     @Column(name = "completed_at", nullable = false)
@@ -67,7 +81,10 @@ public class CleaningLog {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        if (status == null) status = "SUBMITTED";
+        if (completedAt == null) completedAt = LocalDateTime.now();
+        if (status == null) status = "COMPLETED";
+        if (cleaningMethod == null) cleaningMethod = CleaningMethod.SURFACE_CHEMICAL_WIPE;
+        if (locationType == null) locationType = CleaningLocationType.ROOM;
     }
 
     public Long getCleaningLogId() { return cleaningLogId; }
@@ -87,6 +104,18 @@ public class CleaningLog {
 
     public User getVerifiedBy() { return verifiedBy; }
     public void setVerifiedBy(User verifiedBy) { this.verifiedBy = verifiedBy; }
+
+    public String getLocationName() { return locationName; }
+    public void setLocationName(String locationName) { this.locationName = locationName; }
+
+    public CleaningLocationType getLocationType() { return locationType; }
+    public void setLocationType(CleaningLocationType locationType) { this.locationType = locationType; }
+
+    public String getPerformedByStaffName() { return performedByStaffName; }
+    public void setPerformedByStaffName(String performedByStaffName) { this.performedByStaffName = performedByStaffName; }
+
+    public String getVerifiedByStaffName() { return verifiedByStaffName; }
+    public void setVerifiedByStaffName(String verifiedByStaffName) { this.verifiedByStaffName = verifiedByStaffName; }
 
     public CleaningMethod getCleaningMethod() { return cleaningMethod; }
     public void setCleaningMethod(CleaningMethod cleaningMethod) { this.cleaningMethod = cleaningMethod; }

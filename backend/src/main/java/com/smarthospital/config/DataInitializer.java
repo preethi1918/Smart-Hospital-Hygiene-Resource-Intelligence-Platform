@@ -11,9 +11,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -28,6 +30,8 @@ public class DataInitializer implements CommandLineRunner {
     private final LinenRepository linenRepository;
     private final LinenHistoryRepository linenHistoryRepository;
     private final EquipmentRepository equipmentRepository;
+    private final TaskRepository taskRepository;
+    private final CleaningLogRepository cleaningLogRepository;
     private final PasswordEncoder passwordEncoder;
     private final DataSource dataSource;
 
@@ -39,6 +43,8 @@ public class DataInitializer implements CommandLineRunner {
                            LinenRepository linenRepository,
                            LinenHistoryRepository linenHistoryRepository,
                            EquipmentRepository equipmentRepository,
+                           TaskRepository taskRepository,
+                           CleaningLogRepository cleaningLogRepository,
                            PasswordEncoder passwordEncoder,
                            DataSource dataSource) {
         this.roleRepository = roleRepository;
@@ -49,6 +55,8 @@ public class DataInitializer implements CommandLineRunner {
         this.linenRepository = linenRepository;
         this.linenHistoryRepository = linenHistoryRepository;
         this.equipmentRepository = equipmentRepository;
+        this.taskRepository = taskRepository;
+        this.cleaningLogRepository = cleaningLogRepository;
         this.passwordEncoder = passwordEncoder;
         this.dataSource = dataSource;
     }
@@ -57,11 +65,14 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         fixLinenTypeColumn();
+        fixTaskTypeColumn();
+        fixCleaningLogsColumns();
         initializeRoles();
         initializeDefaultAdmin();
         initializeStructureAndBeds();
         initializeLinenItems();
         initializeEquipment();
+        initializeCleaningTasks();
     }
 
     private void fixLinenTypeColumn() {
@@ -74,6 +85,39 @@ public class DataInitializer implements CommandLineRunner {
                 logger.info("Ensured linen.linen_type column is VARCHAR(50) (MySQL syntax)");
             } catch (Exception e2) {
                 logger.debug("Linen type column alter info: {}", e2.getMessage());
+            }
+        }
+    }
+
+    private void fixTaskTypeColumn() {
+        try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
+            stmt.execute("ALTER TABLE tasks ALTER COLUMN task_type VARCHAR(50)");
+            logger.info("Ensured tasks.task_type column is VARCHAR(50)");
+        } catch (Exception e1) {
+            try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
+                stmt.execute("ALTER TABLE tasks MODIFY COLUMN task_type VARCHAR(50) NOT NULL");
+                logger.info("Ensured tasks.task_type column is VARCHAR(50) (MySQL syntax)");
+            } catch (Exception e2) {
+                logger.debug("Task type column alter info: {}", e2.getMessage());
+            }
+        }
+    }
+
+    private void fixCleaningLogsColumns() {
+        try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
+            stmt.execute("ALTER TABLE cleaning_logs ALTER COLUMN room_id DROP NOT NULL");
+            logger.info("Ensured cleaning_logs.room_id column is nullable (H2 DROP NOT NULL)");
+        } catch (Exception ignored) {
+            try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
+                stmt.execute("ALTER TABLE cleaning_logs ALTER COLUMN room_id NULL");
+                logger.info("Ensured cleaning_logs.room_id column is nullable (H2 ALTER COLUMN NULL)");
+            } catch (Exception ignored2) {
+                try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
+                    stmt.execute("ALTER TABLE cleaning_logs MODIFY COLUMN room_id BIGINT NULL");
+                    logger.info("Ensured cleaning_logs.room_id column is nullable (MySQL MODIFY)");
+                } catch (Exception e) {
+                    logger.debug("Cleaning logs room column alter info: {}", e.getMessage());
+                }
             }
         }
     }
@@ -347,6 +391,175 @@ public class DataInitializer implements CommandLineRunner {
             equipmentRepository.save(eq3);
 
             logger.info("Initialized sample biomedical equipment items with QR codes");
+        }
+    }
+
+    private void initializeCleaningTasks() {
+        if (taskRepository.count() == 0) {
+            User admin = userRepository.findByEmail("admin@hospital.com").orElse(null);
+            Room room204 = roomRepository.findByQrCodeIdentifier("ROOM-204").orElse(null);
+            Bed bed204 = bedRepository.findByQrCodeIdentifier("BED-204").orElse(null);
+
+            // 1. ROOM Cleaning Task (COMPLETED)
+            Task taskRoom = new Task();
+            taskRoom.setTaskCode("TASK-CLN-101");
+            taskRoom.setLocationName("Inpatient Room 204 (West Wing)");
+            taskRoom.setLocationType(CleaningLocationType.ROOM);
+            taskRoom.setTargetQrCode("ROOM-204");
+            taskRoom.setTargetRoom(room204);
+            taskRoom.setTaskType(TaskType.TERMINAL_ROOM_CLEAN);
+            taskRoom.setPriority(TaskPriority.URGENT);
+            taskRoom.setStatus(TaskStatus.COMPLETED);
+            taskRoom.setAssignedStaffName("Nurse Sarah Jenkins (Sanitation Lead)");
+            taskRoom.setCompletedByStaffName("Nurse Sarah Jenkins (Sanitation Lead)");
+            taskRoom.setScheduledStartTime(LocalDateTime.now().minusHours(2));
+            taskRoom.setActualStartTime(LocalDateTime.now().minusMinutes(110));
+            taskRoom.setActualEndTime(LocalDateTime.now().minusMinutes(70));
+            taskRoom.setSpecialInstructions("Perform full biohazard terminal clean post-patient discharge.");
+            taskRoom.setNotes("Terminal clean completed with hospital-grade quaternary spray. All touch surfaces disinfected.");
+            taskRoom.setAssignedBy(admin);
+            taskRepository.save(taskRoom);
+
+            CleaningLog log1 = new CleaningLog();
+            log1.setTask(taskRoom);
+            log1.setRoom(room204);
+            log1.setLocationName(taskRoom.getLocationName());
+            log1.setLocationType(CleaningLocationType.ROOM);
+            log1.setPerformedBy(admin);
+            log1.setPerformedByStaffName("Nurse Sarah Jenkins (Sanitation Lead)");
+            log1.setCleaningMethod(CleaningMethod.SURFACE_CHEMICAL_WIPE);
+            log1.setDisinfectantUsed("Hospital-Grade Quaternary Disinfectant (Virex II 256)");
+            log1.setQrScannedToken("ROOM-204");
+            log1.setHygieneScorePostClean(new BigDecimal("99.20"));
+            log1.setStatus("COMPLETED");
+            log1.setNotes("Room sanitized to surgical turnover grade. Ready for patient admission.");
+            log1.setStartedAt(taskRoom.getActualStartTime());
+            log1.setCompletedAt(taskRoom.getActualEndTime());
+            cleaningLogRepository.save(log1);
+
+            // 2. BED Cleaning Task (IN_PROGRESS)
+            Task taskBed = new Task();
+            taskBed.setTaskCode("TASK-CLN-102");
+            taskBed.setLocationName("Bed B-204-A (Room 204)");
+            taskBed.setLocationType(CleaningLocationType.BED);
+            taskBed.setTargetQrCode("BED-204");
+            taskBed.setTargetBed(bed204);
+            taskBed.setTaskType(TaskType.BED_DISINFECTION);
+            taskBed.setPriority(TaskPriority.URGENT);
+            taskBed.setStatus(TaskStatus.IN_PROGRESS);
+            taskBed.setAssignedStaffName("Robert Chang (Sterile Services)");
+            taskBed.setScheduledStartTime(LocalDateTime.now().minusMinutes(45));
+            taskBed.setActualStartTime(LocalDateTime.now().minusMinutes(30));
+            taskBed.setSpecialInstructions("Strip soiled linen, apply antimicrobial mattress wrap, and disinfect side-rails.");
+            taskBed.setNotes("Linen stripped. Currently applying bleach-free antimicrobial disinfectant to mattress envelope.");
+            taskBed.setAssignedBy(admin);
+            taskRepository.save(taskBed);
+
+            // 3. TOILET Cleaning Task (OVERDUE)
+            Task taskToilet = new Task();
+            taskToilet.setTaskCode("TASK-CLN-103");
+            taskToilet.setLocationName("Public Restroom Complex - Ward 2");
+            taskToilet.setLocationType(CleaningLocationType.TOILET);
+            taskToilet.setTargetQrCode("TOILET-W2-01");
+            taskToilet.setTaskType(TaskType.TOILET_DEEP_CLEAN);
+            taskToilet.setPriority(TaskPriority.STAT_EMERGENCY);
+            taskToilet.setStatus(TaskStatus.OVERDUE);
+            taskToilet.setAssignedStaffName("Maria Gonzalez (Hygiene Tech)");
+            taskToilet.setScheduledStartTime(LocalDateTime.now().minusHours(3));
+            taskToilet.setSpecialInstructions("Deep steam sterilization of ceramic fixtures and replenish antimicrobial soap.");
+            taskToilet.setNotes("Scheduled hourly inspection missed. Needs urgent sanitation response.");
+            taskToilet.setAssignedBy(admin);
+            taskRepository.save(taskToilet);
+
+            // 4. CORRIDOR Cleaning Task (COMPLETED)
+            Task taskCorr = new Task();
+            taskCorr.setTaskCode("TASK-CLN-104");
+            taskCorr.setLocationName("Level 3 North Hallway Corridor");
+            taskCorr.setLocationType(CleaningLocationType.CORRIDOR);
+            taskCorr.setTargetQrCode("CORR-L3-N");
+            taskCorr.setTaskType(TaskType.CORRIDOR_SANITY_MOP);
+            taskCorr.setPriority(TaskPriority.ROUTINE);
+            taskCorr.setStatus(TaskStatus.COMPLETED);
+            taskCorr.setAssignedStaffName("David Miller (Environmental Operations)");
+            taskCorr.setCompletedByStaffName("David Miller (Environmental Operations)");
+            taskCorr.setScheduledStartTime(LocalDateTime.now().minusHours(4));
+            taskCorr.setActualStartTime(LocalDateTime.now().minusHours(4));
+            taskCorr.setActualEndTime(LocalDateTime.now().minusHours(3));
+            taskCorr.setSpecialInstructions("Machine scrubbing and high-traction sanitizing wet mop.");
+            taskCorr.setNotes("Passed high-efficiency floor scrubber with neutralized bio-disinfectant.");
+            taskCorr.setAssignedBy(admin);
+            taskRepository.save(taskCorr);
+
+            CleaningLog log2 = new CleaningLog();
+            log2.setTask(taskCorr);
+            log2.setLocationName(taskCorr.getLocationName());
+            log2.setLocationType(CleaningLocationType.CORRIDOR);
+            log2.setPerformedBy(admin);
+            log2.setPerformedByStaffName("David Miller (Environmental Operations)");
+            log2.setCleaningMethod(CleaningMethod.STEAM_STERILIZATION);
+            log2.setDisinfectantUsed("Peracetic Acid Solution (0.2%)");
+            log2.setQrScannedToken("CORR-L3-N");
+            log2.setHygieneScorePostClean(new BigDecimal("96.80"));
+            log2.setStatus("COMPLETED");
+            log2.setNotes("Corridor floor polished and sterilized. Floor friction coefficient compliant.");
+            log2.setStartedAt(taskCorr.getActualStartTime());
+            log2.setCompletedAt(taskCorr.getActualEndTime());
+            cleaningLogRepository.save(log2);
+
+            // 5. WAITING AREA Cleaning Task (VERIFIED)
+            Task taskWait = new Task();
+            taskWait.setTaskCode("TASK-CLN-105");
+            taskWait.setLocationName("Emergency Reception Waiting Lounge");
+            taskWait.setLocationType(CleaningLocationType.WAITING_AREA);
+            taskWait.setTargetQrCode("WAIT-ER-01");
+            taskWait.setTaskType(TaskType.WAITING_AREA_SANITATION);
+            taskWait.setPriority(TaskPriority.URGENT);
+            taskWait.setStatus(TaskStatus.VERIFIED);
+            taskWait.setAssignedStaffName("Elena Rostova (Sanitation)");
+            taskWait.setCompletedByStaffName("Elena Rostova (Sanitation)");
+            taskWait.setVerifiedByStaffName("Dr. Vance (Chief Hygiene Officer)");
+            taskWait.setScheduledStartTime(LocalDateTime.now().minusHours(5));
+            taskWait.setActualStartTime(LocalDateTime.now().minusHours(5));
+            taskWait.setActualEndTime(LocalDateTime.now().minusHours(4));
+            taskWait.setSpecialInstructions("High-frequency touchpoint wipe-down and aerosol mist disinfection.");
+            taskWait.setNotes("Misting and electrostatic spray complete. Verified compliant with hospital infection control standard.");
+            taskWait.setAssignedBy(admin);
+            taskRepository.save(taskWait);
+
+            CleaningLog log3 = new CleaningLog();
+            log3.setTask(taskWait);
+            log3.setLocationName(taskWait.getLocationName());
+            log3.setLocationType(CleaningLocationType.WAITING_AREA);
+            log3.setPerformedBy(admin);
+            log3.setPerformedByStaffName("Elena Rostova (Sanitation)");
+            log3.setVerifiedByStaffName("Dr. Vance (Chief Hygiene Officer)");
+            log3.setCleaningMethod(CleaningMethod.UVC_IRRADIATION);
+            log3.setDisinfectantUsed("Hydrogen Peroxide Dry Fog Vapor + UV-C Mobile Lamp");
+            log3.setQrScannedToken("WAIT-ER-01");
+            log3.setHygieneScorePostClean(new BigDecimal("99.50"));
+            log3.setStatus("COMPLETED");
+            log3.setNotes("Complete airborne and surface microbial eradication certified.");
+            log3.setStartedAt(taskWait.getActualStartTime());
+            log3.setCompletedAt(taskWait.getActualEndTime());
+            cleaningLogRepository.save(log3);
+
+            // 6. HANDWASH STATION Cleaning Task (PENDING)
+            Task taskHwash = new Task();
+            taskHwash.setTaskCode("TASK-CLN-106");
+            taskHwash.setLocationName("ICU Central Handwash Station #1");
+            taskHwash.setLocationType(CleaningLocationType.HANDWASH_STATION);
+            taskHwash.setTargetQrCode("HWASH-ICU-01");
+            taskHwash.setTaskType(TaskType.HANDWASH_STATION_SERVICE);
+            taskHwash.setPriority(TaskPriority.URGENT);
+            taskHwash.setStatus(TaskStatus.PENDING);
+            taskHwash.setAssignedStaffName("James Wilson (Sterile Tech)");
+            taskHwash.setScheduledStartTime(LocalDateTime.now().plusHours(2));
+            taskHwash.setSpecialInstructions("Inspect chlorhexidine refill cartridge, wipe faucet sensor, flush drains.");
+            taskHwash.setNotes("Routine pre-shift hygiene check and refill scheduled.");
+            taskHwash.setAssignedBy(admin);
+            taskRepository.save(taskHwash);
+
+            logger.info("Initialized sample cleaning tasks and audit logs across all 6 locations (Rooms, Beds, Toilets, Corridors, Waiting Areas, Handwash Stations)");
         }
     }
 }

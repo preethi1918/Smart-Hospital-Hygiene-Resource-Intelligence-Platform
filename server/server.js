@@ -52,8 +52,8 @@ function proxyToSpringBoot(req, res) {
   proxyReq.end();
 }
 
-// Intercept Spring Boot Structure, Linen, Auth, and QR routes
-app.use(['/api/hospitals*', '/api/buildings*', '/api/floors*', '/api/wards*', '/api/rooms*', '/api/beds*', '/api/linen*', '/api/auth*', '/api/qr*'], (req, res) => {
+// Intercept Spring Boot Structure, Linen, Auth, QR, and Cleaning routes
+app.use(['/api/hospitals*', '/api/buildings*', '/api/floors*', '/api/wards*', '/api/rooms*', '/api/beds*', '/api/linen*', '/api/auth*', '/api/qr*', '/api/cleaning*'], (req, res) => {
   proxyToSpringBoot(req, res);
 });
 
@@ -171,7 +171,11 @@ app.post('/api/actions/reset', (req, res) => {
   res.json({ success: true, message: 'All hospital zones and simulation data reset to optimal baseline.' });
 });
 
-// Route aliases for Mobile & React QR Scanner
+// Route aliases for Mobile & React QR Scanner and Cleaning Management
+app.use('/cleaning', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/cleaning.html'));
+});
+
 app.get(['/scanner', '/scan'], (req, res) => {
   res.sendFile(path.join(__dirname, '../public/scan.html'));
 });

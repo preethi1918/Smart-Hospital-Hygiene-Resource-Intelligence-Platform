@@ -204,6 +204,45 @@
       }
     };
 
+    // Complete Cleaning Task via QR Workflow
+    const handleCompleteCleaningViaQr = async (notes = 'Completed via mobile scanner QR verification') => {
+      if (!resource) return;
+      setLoading(true);
+      try {
+        const headers = {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch('/api/cleaning/tasks/complete-qr', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            qrCode: resource.qrCodeIdentifier,
+            notes: notes,
+            disinfectantUsed: 'Hospital-Grade Quaternary Disinfectant (Virex II 256)',
+            cleaningMethod: 'SURFACE_CHEMICAL_WIPE'
+          })
+        });
+
+        const json = await res.json();
+        if (!res.ok || !json.data) {
+          throw new Error(json.message || 'Cleaning task completion failed');
+        }
+
+        playAudioBeep(true);
+        showToast(`Cleaning Task for ${resource.qrCodeIdentifier} completed & logged! Staff: ${json.data.completedByStaff || 'Authorized Staff'}`, 'success');
+        // Refresh the resource details
+        identifyResource(resource.qrCodeIdentifier);
+      } catch (err) {
+        playAudioBeep(false);
+        showToast(`Cleaning task error: ${err.message}`, 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     // Fetch History Timeline
     const handleViewHistory = async () => {
       if (!resource) return;
@@ -364,6 +403,18 @@
             </button>
             <button className="scanner-preset-btn" onClick={() => identifyResource('ROOM-204')}>
               🚪 ROOM-204
+            </button>
+            <button className="scanner-preset-btn" onClick={() => identifyResource('TOILET-W2-01')}>
+              🚻 TOILET-W2-01
+            </button>
+            <button className="scanner-preset-btn" onClick={() => identifyResource('CORR-L3-N')}>
+              🚶 CORR-L3-N
+            </button>
+            <button className="scanner-preset-btn" onClick={() => identifyResource('WAIT-ER-01')}>
+              🛋️ WAIT-ER-01
+            </button>
+            <button className="scanner-preset-btn" onClick={() => identifyResource('HWASH-ICU-01')}>
+              🧼 HWASH-ICU-01
             </button>
             <button className="scanner-preset-btn" onClick={() => identifyResource('LINEN-1024')}>
               🧺 LINEN-1024
@@ -611,6 +662,23 @@
                   </button>
                 </div>
               )}
+
+              {/* Universal Hygiene & Cleaning Completion Workflow */}
+              <div style={{ marginTop: '0.9rem', paddingTop: '0.85rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 600 }}>
+                  🧼 Cleaning & Hygiene Management Workflow
+                </div>
+                <div className="scanner-actions-grid">
+                  <button className="scanner-action-btn emerald" onClick={() => handleCompleteCleaningViaQr('Sanitized & verified via QR Scan workflow')}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    Complete Cleaning Task (QR)
+                  </button>
+                  <a href="/cleaning" className="scanner-action-btn cyan" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Open Cleaning Portal
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         )}

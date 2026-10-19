@@ -1124,6 +1124,42 @@ Additional modules will be integrated progressively.
 
 ---
 
+## 🛏️ Linen & Laundry Lifecycle Intelligence Module (Completed)
+
+The Linen Management Module provides clinical asset lifecycle tracking and thermal disinfection audit trails across hospital facilities:
+
+### 1. Tracked Attributes (9 Core Dimensions)
+- **Linen ID / Identifier**: Unique machine and visual tracking code (e.g. `LIN-BS-101`)
+- **Type**: `Bedsheet`, `Pillow Cover`, `Blanket`, `Patient Gown`, `Other`
+- **Status**: `CLEAN`, `IN_USE`, `DUE_FOR_CHANGE`, `IN_LAUNDRY`, `DAMAGED`, `RETIRED`
+- **Current Location**: Central linen storage, decontamination washers, wards, or bedside
+- **Assigned Bed**: Relational foreign-key mapping to specific hospital beds
+- **Last Washed Date**: Date of latest verified thermal wash cycle
+- **Wash Cycle Count**: Real-time cycle count with interactive wear meter vs. recommended threshold
+- **Issue Date**: Date asset entered platform circulation
+- **Damage Status**: `NONE`, `MINOR_WEAR`, `STAINED`, `TORN`, `CONTAMINATED`, `SEVERELY_DAMAGED`
+
+### 2. Backend REST APIs (`/api/linen`)
+- `GET /api/linen` - Query & filter fleet by keyword, type, status, damage, or bed
+- `GET /api/linen/stats` - Summary KPI metrics across all statuses and types
+- `GET /api/linen/{id}` - Retrieve detailed linen asset record
+- `POST /api/linen` - Register new linen item into hospital inventory
+- `PUT /api/linen/{id}` - Full asset attribute update
+- `PATCH /api/linen/{id}/status` - Operational status transition with audit reason & staff signature
+- `PATCH /api/linen/{id}/assign` - Bed allocation / relocation to central storage
+- `PATCH /api/linen/{id}/wash` - Log thermal wash cycle (increments wash count, sets status `CLEAN`, sets last washed date)
+- `PATCH /api/linen/{id}/damage` - Report physical defects, tears, stains, or decontamination issues
+- `GET /api/linen/{id}/history` - Chronological audit timeline of all state transitions
+- `POST /api/linen/{id}/history` - Log manual audit / inspection notes
+- `DELETE /api/linen/{id}` - Decommission / delete record
+
+### 3. Frontend Interfaces
+- **Dedicated Portal**: `/linen.html` (Standalone Dark Clinical Glassmorphism Interface)
+- **Dashboard Tab**: Integrated "Linen Management" tab in `/index.html`
+- **Interactive Modals**: Registration, Status Change, Bed Assignment, Wash Verification, Damage Reporting, and Lifecycle History Timeline
+
+---
+
 # 📜 License
 
 This project is developed for **educational, research, and demonstration purposes**.
@@ -1133,3 +1169,4 @@ This project is developed for **educational, research, and demonstration purpose
 ## 🏥 Vision
 
 > **To create a connected hospital operational environment where every important resource, task, and hygiene activity can be digitally tracked, monitored, and improved through data.**
+
